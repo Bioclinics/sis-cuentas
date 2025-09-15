@@ -1,32 +1,37 @@
+# ============================
 # Etapa de build
+# ============================
 FROM node:22-alpine AS builder
 
 WORKDIR /usr/src/app
 
-# Copiamos dependencias
+# Copiar solo package.json y package-lock.json primero para aprovechar la cache
 COPY package*.json ./
 
-# Instalamos solo devDependencies para poder compilar
 RUN npm install
 
-# Copiamos el resto del código
+# Copiar todo el código y compilar
 COPY . .
 
-# Compilamos el proyecto
 RUN npm run build
 
+# ============================
 # Etapa de producción
-FROM node:22-alpine
+# ============================
+FROM node:22-alpine AS production
 
 WORKDIR /usr/src/app
 
-# Copiamos solo lo necesario desde el build
+# Copiar solo las dependencias necesarias
 COPY package*.json ./
-RUN npm install --production
 
+RUN npm install --omit=dev
+
+# Copiar el resultado del build desde la etapa anterior
 COPY --from=builder /usr/src/app/dist ./dist
 
-# Exponemos puerto interno 3000
+# Exponer el puerto configurado en Nest (por defecto 3000)
 EXPOSE 3000
 
+# Comando para ejecutar la app
 CMD ["node", "dist/main.js"]

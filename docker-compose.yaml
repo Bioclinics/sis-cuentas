@@ -7,7 +7,13 @@ services:
       - "3001:3000"       # externo:interno
     restart: always
     environment:
-      NODE_ENV: production
+      - NODE_ENV=production
+      - DB_TYPE=postgres
+      - DB_HOST=192.168.100.2
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=j1i2m3i4
+      - DB_NAME=db_sis_cuentas
 
   frontend:
     build:
@@ -16,3 +22,5 @@ services:
     ports:
       - "3000:3000"
     restart: always
+    depends_on:
+      - backend
