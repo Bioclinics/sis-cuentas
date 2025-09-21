@@ -4,7 +4,7 @@ import { CreateCuentaDto } from './dto/create-cuenta.dto';
 import { UpdateCuentaDto } from './dto/update-cuenta.dto';
 import { Response } from 'express';
 
-@Controller('cuentas')
+@Controller('api/cuentas')
 export class CuentasController {
   constructor(private readonly cuentasService: CuentasService) {}
 
